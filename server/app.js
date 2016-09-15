@@ -35,16 +35,32 @@ app.post('/changeTableStatus', urlEncodedParser, function(req, res){
         done();
         return res.json(resultArray);
       });
-    }
-  });
-});
+    }//end else
+  });//end connect
+});//end changeTableStatus
 
 app.post('/changeServer', urlEncodedParser, function(req, res){
   console.log('changeServer hit');
+  //expecting a table and a server id
+  var data = {serverId: req.body.serverId, tableId: req.body.tableId};
+  pg.connect(connectionString, function(err, client, done){
+    if (err){
+      console.log(err);
+    }
+    else{
+      client.query('UPDATE dinner_table SET server_id=($1) WHERE id=($2)', [data.serverId, data.tableId]);
+      var resultQuery = client.query(`SELECT * FROM dinner_table WHERE id=${data.tableId}`);
+      var resultArray = [];
+      resultQuery.on('row', function(row){
+        resultArray.push(row);
+      });
+      resultQuery.on('end', function(){
+        done();
+        return res.json(resultArray);
+      });
+    }//end else
+  });//end connect
 });
-
-app.use(express.static('public'));
-
 
 app.post('/addServer', urlEncodedParser, function(req,res){
   console.log('in addServer');
@@ -124,3 +140,5 @@ app.get('/getAllTables', function(req,res){
     }//end else
   });//end pg
 });//end getAllTables
+
+app.use(express.static('public'));
