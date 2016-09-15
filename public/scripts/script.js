@@ -2,8 +2,9 @@ console.log('script sourced');
 
 // arrays
 var tables=[];
- var employees=[];
-var newEmployee ={};
+var employees=[];
+var statuses =['empty', 'seated', 'served', 'dirty']
+var statusSelector = '<select class="statusSelector"><option>empty</option><option>seated</option><option>served</option><option>dirty</option>';
 
 $(document).ready(function(){
   console.log('JQ works');
@@ -40,7 +41,7 @@ $(document).ready(function(){
   $('#createEmployee').on('click',function(){
     //verify click is working
     console.log("in createEmployee on click");
-    createEmployee();
+    var newEmployee = createEmployee();
     //send employee info to the server
     $.ajax({
       type:"POST",
@@ -64,20 +65,41 @@ $('#createTable').on('click', function(){
   //display current employees
 
   // display current tables
-
+  $('body').on('click', '.tableStatus', function(){
+    $(this).replaceWith(statusSelector);
+  });
+  ///----------------------------------------------------TO BE CONTINUED
+  $('body').on('change', '.statusSelector', function(){
+    //status, id
+    // console.log();
+    // var objectToSend = {
+    //   status: $(this).val(),
+    //   id: tables[i].id
+    // }
+    // $.ajax({
+    //   url: '/changeTableStatus',
+    //   type: 'POST',
+    //   data: objectToSend,
+    //   success: function(data){
+    //     //do stuff
+    //     listTables();
+    //   }
+    // })
+  })
 });//end doc ready
 
 var createEmployee = function(){
   console.log( 'in createEmployee' );
+  var newEmployee ={};
   // get user input
   var employeeFirstName = $( '#employeeFirstNameIn' ).val();
   var employeeLastName = $( '#employeeLastNameIn' ).val();
   // create object for employee
   newEmployee= {
-    firstName : employeeFirstName,
-    lastName : employeeLastName
+    first_name : employeeFirstName,
+    last_name : employeeLastName
   }; // end object
-
+  return newEmployee;
 }; // end createEmployee
 
 var createTable = function(){
@@ -154,9 +176,9 @@ var listTables = function(table){
   console.log("data before for loop", table);
   for( i=0; i< table.length; i++ ){
     // status is a button that, when clicked runs cycleStatus for this table
-    var line = table[i].table_name + " - capacity: " + table[i].capacity + ', server: ' + selectText + ', status: <button onClick="cycleStatus(' + i + ')">' + table[i].status + "</button>";
+    var line = table[i].table_name + " - capacity: " + table[i].capacity + ', server: ' + selectText + ', status: <ins class="tableStatus" style="display: inline;">' + table[i].status + "</ins>";
     // add line to output div
-    outputText += '<p>' + line + '</p>';
+    outputText += '<p id="table' + i + '">' + line + '</p>';
     $('#tablesOutput').html(outputText);
   }
 }; // end listTables
