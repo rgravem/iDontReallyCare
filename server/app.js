@@ -110,9 +110,16 @@ app.post('/addTable', urlEncodedParser, function(req,res){
     }//end if
     else{
       console.log('connected to database for addTable');
-      var queryResults = client.query('INSERT INTO dinner_table (capacity, status, server_id) VALUES ($1,$2,$3) ',
-      [req.body.capacity, req.body.status, req.body.server_id],
-      done());
+      var resultArray =[];
+      var queryResults = client.query('INSERT INTO dinner_table (table_name, capacity, status) VALUES ($1,$2,$3) ', [req.body.table_name, req.body.capacity, req.body.status], done());
+      queryResults.on('row', function(row){
+        resultArray.push(row);
+        console.log(resultArray);
+      });//end queryResults on row
+      queryResults.on('end', function(){
+        done();
+        return res.json(resultArray);
+      });//end queryResults on end
     }//end else
   });//end pg
 });//end /addTable

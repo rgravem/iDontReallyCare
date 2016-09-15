@@ -5,6 +5,7 @@ var tables=[];
  var employees=[];
 var newEmployee ={};
 
+
 $(document).ready(function(){
   console.log('JQ works');
   //get employees and tables on load
@@ -23,7 +24,6 @@ $(document).ready(function(){
   });// end on click
 
   $('#currentTables').on('click', function(){
-
     $.ajax({
         type:"get",
         url: '/getAllTables',
@@ -33,7 +33,6 @@ $(document).ready(function(){
         }//end success
     });// end getTables ajax
   });//end on click
-
 
 
   // add employee on click
@@ -57,13 +56,24 @@ $(document).ready(function(){
   });//end createEmployee on click
 
   //add table on click
-$('#createTable').on('click', function(){
-  //verify click is working
-  console.log("in createTable on click");
-});
-  //display current employees
+  $('#createTable').on('click', function(){
+    //verify click is working
+    console.log("in createTable on click");
+    var newTable=createTable();
+    $.ajax ({
+      type:"POST",
+      url: '/addTable',
+      data: newTable,
+      success: function(data){
+        console.log('ajax success back with:', data);
+        tables.push(data);
 
-  // display current tables
+        listTables(data);
+
+      }//end success
+    });//end ajax
+  });//end createTable on click
+
 
 });//end doc ready
 
@@ -87,16 +97,11 @@ var createTable = function(){
   var tableCapacity = $('#capacityIn').val();
   // table object for new table
   var newTable = {
-    'name': tableName,
+    'table_name': tableName,
     'capacity': tableCapacity,
-    'server': -1,
     'status': 'empty'
   };
-  // push new obejct into tables array
-  tables.push( newTable );
-  console.log( 'added table: ' + newTable.name );
-  // update output
-  listTables();
+  return newTable;
 }; // end createTable
 
 var cycleStatus = function( index ){
