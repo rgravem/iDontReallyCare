@@ -1,4 +1,4 @@
-console.log('script sourced');
+console.log( 'script sourced' );
 
 // arrays
 var tables=[];
