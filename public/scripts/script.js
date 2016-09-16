@@ -133,7 +133,21 @@ $(document).ready(function(){
         location.reload();
       }
     })
-  })
+  })//end .deleteServer onClick
+
+  $('body').on('click', '.deleteTable', function(){
+    var objectToSend = {
+      id: $(this).val()
+    }
+    $.ajax({
+      url: 'deleteTable',
+      type: 'POST',
+      data: objectToSend,
+      success: function(data){
+        location.reload();
+      }
+    })
+  })//end .deleteTable onClick
 });//end doc ready
 
 var createEmployee = function(){
@@ -232,7 +246,7 @@ var listTables = function(table){
       currentServer = server.first_name + ' ' + server.last_name;
     }
     // status is a button that, when clicked runs cycleStatus for this table
-    var line = table[i].table_name + " - capacity: " + table[i].capacity + ', server: <ins class="currentServer" style="display: inline;">' + currentServer + '</ins>, status: <ins class="tableStatus" style="display: inline;">' + table[i].status + "</ins>";
+    var line = table[i].table_name + " - capacity: " + table[i].capacity + ', server: <ins class="currentServer" style="display: inline;">' + currentServer + '</ins>, status: <ins class="tableStatus" style="display: inline;">' + table[i].status + '</ins> <button class="deleteTable" value="' + table[i].id + '">Burn</button>';
     // add line to output div
     outputText += '<p id="table' + i + '">' + line + '</p>';
     $('#tablesOutput').html(outputText);
