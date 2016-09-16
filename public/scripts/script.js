@@ -30,6 +30,7 @@ $(document).ready(function(){
         url: '/getAllTables',
         success: function(table){
           console.log("back from the server with:", table);
+          tables.push(table);
           listTables(table);
         }//end success
     });// end getTables ajax
@@ -67,7 +68,7 @@ $(document).ready(function(){
       data: newTable,
       success: function(data){
         console.log('ajax success back with:', data);
-        tables.push(data);
+        tables.push(data[0]);
 
         listTables(data);
 
@@ -84,19 +85,23 @@ $(document).ready(function(){
   $('body').on('change', '.statusSelector', function(){
     //status, id
     // console.log();
-    // var objectToSend = {
-    //   status: $(this).val(),
-    //   id: tables[i].id
-    // }
-    // $.ajax({
-    //   url: '/changeTableStatus',
-    //   type: 'POST',
-    //   data: objectToSend,
-    //   success: function(data){
-    //     //do stuff
-    //     listTables();
-    //   }
-    // })
+    var objectToSend = {
+      status: $(this).val(),
+      id: tables[$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)][0].id
+    };
+    //change client side table status
+    tables[$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)][0].status = objectToSend.status;
+    console.log(objectToSend);
+
+    $.ajax({
+      url: '/changeTableStatus',
+      type: 'POST',
+      data: objectToSend,
+      success: function(data){
+        //do stuff
+        listTables(tables[0]);
+      }
+    })
   })
 
 });//end doc ready
@@ -129,27 +134,27 @@ var createTable = function(){
   return newTable;
 }; // end createTable
 
-var cycleStatus = function( index ){
-  console.log( 'in cycleStatus: ' + index );
-  // move table status to next status
-  switch( tables[index].status ){
-    case  'empty':
-        tables[index].status = 'seated';
-        break;
-    case  'seated':
-        tables[index].status = 'served';
-        break;
-    case  'served':
-        tables[index].status = 'dirty';
-        break;
-    case  'dirty':
-    break;
-    default:
-      tables[index].status = 'empty';
-  }
-  // show tables on DOM
-  listTables();
-}; // end cycleStatus
+// var cycleStatus = function( index ){
+//   console.log( 'in cycleStatus: ' + index );
+//   // move table status to next status
+//   switch( tables[index].status ){
+//     case  'empty':
+//         tables[index].status = 'seated';
+//         break;
+//     case  'seated':
+//         tables[index].status = 'served';
+//         break;
+//     case  'served':
+//         tables[index].status = 'dirty';
+//         break;
+//     case  'dirty':
+//     break;
+//     default:
+//       tables[index].status = 'empty';
+//   }
+//   // show tables on DOM
+//   listTables();
+// }; // end cycleStatus
 
 var listEmployees = function(data){
   var addLineText ='';
