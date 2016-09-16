@@ -4,25 +4,24 @@ console.log('script sourced');
 var tables=[];
 var employees=[];
 var statuses =['empty', 'seated', 'served', 'dirty']
-var statusSelector = '<select class="statusSelector"><option>empty</option><option>seated</option><option>served</option><option>dirty</option>';
+var statusSelector = '<select class="statusSelector"><option>Select</option><option>empty</option><option>seated</option><option>served</option><option>dirty</option>';
+var selectText = '';
 
 
 $(document).ready(function(){
   console.log('JQ works');
   //get employees and tables on load
-  $('#currentEmployees').on('click', function(){
-    $.ajax({
-        type:"get",
-        url: '/getServer',
-        success: function(data){
-          console.log("back from the server with:", data);
-          listEmployees(data);
-          for (var i = 0; i < data.length; i++) {
-            employees.push(data[ i ]);
-          }
-        }//end success
-    });// end getServer ajax
-  });// end on click
+  $.ajax({
+      type:"get",
+      url: '/getServer',
+      success: function(data){
+        console.log("back from the server with:", data);
+        for (var i = 0; i < data.length; i++) {
+          employees.push(data[ i ]);
+        }
+        listEmployees(data);
+      }//end success
+  });// end getServer ajax
 
   $('#currentTables').on('click', function(){
     $.ajax({
@@ -50,9 +49,10 @@ $(document).ready(function(){
       success: function(data){
         console.log("ajax success back with:", data);
         //display  employees in employeesOutput
+        employees.push(data);
         listEmployees(data);
         // push into employees array
-        employees.push(data);
+
       }//end success
     });//end ajax /addServer call
   });//end createEmployee on click
@@ -81,16 +81,16 @@ $(document).ready(function(){
   $('body').on('click', '.tableStatus', function(){
     $(this).replaceWith(statusSelector);
   });
-  ///----------------------------------------------------TO BE CONTINUED
   $('body').on('change', '.statusSelector', function(){
     //status, id
     // console.log();
     var objectToSend = {
       status: $(this).val(),
-      id: tables[$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)][0].id
+      id: tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].id
     };
     //change client side table status
-    tables[$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)][0].status = objectToSend.status;
+    tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].status = objectToSend.status;
+
     console.log(objectToSend);
 
     $.ajax({
@@ -98,12 +98,31 @@ $(document).ready(function(){
       type: 'POST',
       data: objectToSend,
       success: function(data){
+        listTables(tables[0]);
+      }
+    })
+  })//end statusSelector onChange
+  $('body').on('click', '.currentServer', function(){
+    $(this).replaceWith(selectText);
+  });//end currentServer on click
+
+  $('body').on('change', '.serverSelect', function(){
+    var objectToSend = {
+      serverId: employees[$(this).val()].id,
+      tableId:  tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].id
+    };
+    //update table in tables array
+    tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].server_id = employees[$(this).val()].id
+    $.ajax({
+      url: '/changeServer',
+      type: 'POST',
+      data: objectToSend,
+      success: function(data){
         //do stuff
         listTables(tables[0]);
       }
     })
-  })
-
+  });
 });//end doc ready
 
 var createEmployee = function(){
@@ -169,7 +188,12 @@ var listEmployees = function(data){
   }
   //update display employees
   $('#employeesOutput').html("<ul>"+addLineText + "</ul>");
-
+  //update global selector html string
+  selectText = '<select class="serverSelect"><option>Select Server</option>';
+  for (var i = 0; i < employees.length; i++) {
+    selectText+= '<option value=' + i + '>'+ employees[i].first_name + ' ' + employees[i].last_name + '</option>';
+  }
+  selectText += '</select>';
 }; // end listEmployees
 
 var listTables = function(table){
@@ -180,16 +204,22 @@ var listTables = function(table){
 
   // select to assign a server to this table
   console.log("employees array in display tables:", employees);
-  var selectText = '<select>';
-  for (var i = 0; i < employees.length; i++) {
-    selectText+= '<option value=' + i + '>'+ employees[i].first_name + ' ' + employees[i].last_name + '</option>';
-  }
-  selectText += '</select>';
+
   // display employees
   console.log("data before for loop", table);
   for( i=0; i< table.length; i++ ){
+    var server;
+    for (var n = 0; n < employees.length; n++) {
+      if (employees[n].id === table[i].server_id){
+        server = employees[n];
+      }
+    }
+    var currentServer = 'None';
+    if (server){
+      currentServer = server.first_name + ' ' + server.last_name;
+    }
     // status is a button that, when clicked runs cycleStatus for this table
-    var line = table[i].table_name + " - capacity: " + table[i].capacity + ', server: ' + selectText + ', status: <ins class="tableStatus" style="display: inline;">' + table[i].status + "</ins>";
+    var line = table[i].table_name + " - capacity: " + table[i].capacity + ', server: <ins class="currentServer" style="display: inline;">' + currentServer + '</ins>, status: <ins class="tableStatus" style="display: inline;">' + table[i].status + "</ins>";
     // add line to output div
     outputText += '<p id="table' + i + '">' + line + '</p>';
     $('#tablesOutput').html(outputText);
