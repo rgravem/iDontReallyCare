@@ -23,9 +23,9 @@ $(document).ready(function(){
         $.ajax({
             type:"get",
             url: '/getAllTables',
-            success: function(table){
-              console.log("back from the server with:", table);
-              tables.push(table);
+            success: function(data){
+              console.log("back from the server with:", data);
+              tables.push(data);
               listTables(tables[0]);
             }//end success
         });// end getTables ajax
@@ -45,11 +45,10 @@ $(document).ready(function(){
       data: newEmployee,
       success: function(data){
         console.log("ajax success back with:", data);
-        //display  employees in employeesOutput
-        employees.push(data[0]);
-        listEmployees(employees);
         // push into employees array
-
+        employees.push(data[0]);
+        //display  employees in employeesOutput
+        listEmployees(employees);
       }//end success
     });//end ajax /addServer call
   });//end createEmployee on click
@@ -76,14 +75,15 @@ $(document).ready(function(){
 
   // display current tables
   $('body').on('click', '.tableStatus', function(){
+    //change displayed status to status selector
     $(this).replaceWith(statusSelector);
   });
+
   $('body').on('change', '.statusSelector', function(){
-    //status, id
-    // console.log();
+    //assemble objectToSend
     var objectToSend = {
       status: $(this).val(),
-      id: tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].id
+      id: /*this mess is all just to get the right index within the client-side array*/ tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].id
     };
     //change client side table status
     tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].status = objectToSend.status;
@@ -95,9 +95,10 @@ $(document).ready(function(){
       type: 'POST',
       data: objectToSend,
       success: function(data){
+        //update table display
         listTables(tables[0]);
-      }
-    })
+      }//end success
+    });//end ajax call
   })//end statusSelector onChange
   $('body').on('click', '.currentServer', function(){
     $(this).replaceWith(selectText);
@@ -106,7 +107,7 @@ $(document).ready(function(){
   $('body').on('change', '.serverSelect', function(){
     var objectToSend = {
       serverId: employees[$(this).val()].id,
-      tableId:  tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].id
+      tableId: /*this mess is all just to get the right index within the client-side array*/ tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].id
     };
     //update table in tables array
     tables[0][$(this).parent().attr('id').charAt($(this).parent().attr('id').length-1)].server_id = employees[$(this).val()].id
@@ -115,14 +116,15 @@ $(document).ready(function(){
       type: 'POST',
       data: objectToSend,
       success: function(data){
-        //do stuff
+        //update table display
         listTables(tables[0]);
-      }
-    })
+      }//end success
+    });//end ajax call
   });//end serverSelect on change
 
   $('body').on('click', '.deleteServer', function(){
     var objectToSend = {
+      //.deleteServer buttons have the appropriate row id stored as their value
       id: $(this).val()
     }
     $.ajax({
@@ -130,13 +132,15 @@ $(document).ready(function(){
       type: 'POST',
       data: objectToSend,
       success: function(data){
+        //refresh page as a lazy way to refresh the entire display
         location.reload();
       }
-    })
+    });//end ajax call
   })//end .deleteServer onClick
 
   $('body').on('click', '.deleteTable', function(){
     var objectToSend = {
+      //.deleteTable buttons have the appropriate row id stored as their value
       id: $(this).val()
     }
     $.ajax({
@@ -144,9 +148,10 @@ $(document).ready(function(){
       type: 'POST',
       data: objectToSend,
       success: function(data){
+        //refresh page as a lazy way to refresh the entire display
         location.reload();
       }
-    })
+    });//end ajax call
   })//end .deleteTable onClick
 });//end doc ready
 
@@ -204,7 +209,7 @@ var listEmployees = function(data){
   var addLineText ='';
   console.log( 'in listEmployees');
 
-  // loop through the tables array and display each table
+  // loop through the provided array and display each server
   for( i=0; i< data.length; i++ ){
     var line = data[i].first_name + " " + data[i].last_name + ' <button class="deleteServer" value="' + data[i].id + '">Fire</button>';
 
@@ -224,13 +229,8 @@ var listEmployees = function(data){
 var listTables = function(table){
   var outputText = '';
   console.log( "in listTables" );
-
   // loop through the tables array and display each table
-
-  // select to assign a server to this table
-  console.log("employees array in display tables:", employees);
-
-  // display employees
+  // console.log("employees array in display tables:", employees);
   console.log("data before for loop", table);
   for( i=0; i< table.length; i++ ){
     var server = false;
