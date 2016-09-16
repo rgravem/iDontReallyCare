@@ -119,7 +119,21 @@ $(document).ready(function(){
         listTables(tables[0]);
       }
     })
-  });
+  });//end serverSelect on change
+
+  $('body').on('click', '.deleteServer', function(){
+    var objectToSend = {
+      id: $(this).val()
+    }
+    $.ajax({
+      url: 'deleteServer',
+      type: 'POST',
+      data: objectToSend,
+      success: function(data){
+        location.reload();
+      }
+    })
+  })
 });//end doc ready
 
 var createEmployee = function(){
@@ -178,7 +192,7 @@ var listEmployees = function(data){
 
   // loop through the tables array and display each table
   for( i=0; i< data.length; i++ ){
-    var line = data[i].first_name + " " + data[i].last_name + ', id: ' + data[ i ].id;
+    var line = data[i].first_name + " " + data[i].last_name + ' <button class="deleteServer" value="' + data[i].id + '">Fire</button>';
 
     //add line text
     addLineText += '<li>' + line + '</li>';

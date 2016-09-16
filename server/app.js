@@ -109,8 +109,6 @@ app.get('/getServer', function(req,res){
   });//end pg
 });//end /getServer
 
-
-
 app.post('/addTable', urlEncodedParser, function(req,res){
   console.log('in addTable');
   pg.connect(connectionString, function(err,client,done){
@@ -132,7 +130,6 @@ app.post('/addTable', urlEncodedParser, function(req,res){
     }//end else
   });//end pg
 });//end /addTable
-
 
 app.get('/getAllTables', function(req,res){
   console.log('in getAllTables');
@@ -156,5 +153,34 @@ app.get('/getAllTables', function(req,res){
     }//end else
   });//end pg
 });//end getAllTables
+
+app.post('/deleteServer', urlEncodedParser, function(req, res){
+  console.log('delete server hit');
+
+  var data = {
+    id: req.body.id
+  };
+  pg.connect(connectionString, function(err, client, done){
+    if (err){
+      console.log(err);
+    }
+    else{
+      client.query('DELETE FROM server WHERE id=$1', [data.id]);
+      var resultQuery = client.query(`SELECT * FROM server`);
+      var resultArray = [];
+      resultQuery.on('row', function(row){
+        resultArray.push(row);
+      });
+      resultQuery.on('end', function(){
+        done();
+        return res.json(resultArray);
+      });
+    }//end else
+  });//end connect
+});
+
+app.post('/deleteTable', urlEncodedParser, function(req, res){
+
+});
 
 app.use(express.static('public'));
