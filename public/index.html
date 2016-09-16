@@ -5,26 +5,35 @@
     <title>Restaurant Example</title>
     <script src="vendors/jquery.js" charset="utf-8"></script>
     <script src="scripts/script.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="styles/master.css" media="screen" title="no title">
   </head>
   <body>
-    <h1>Restaurant POC</h1>
-    <h2>Create Table</h2>
-    Name:<input type="text" id="nameIn" value="" placeholder='Ex: table01'>
-    Capacity:<select id="capacityIn">
-      <option value=2>2</option>
-      <option value=4>4</option>
-      <option value=6>6</option>
-      <option value=8>8</option>
-      <option value=10>10</option>
-    </select>
-    <button id="createTable">Add Table</button>
-    <h2>Create Employee</h2>
-    <input type="text" id="employeeFirstNameIn" value="" placeholder="First Name">
-    <input type="text" id="employeeLastNameIn" value="" placeholder="Last Name">
-    <button id="createEmployee">Add Employee</button>
-    <h2 id ="currentEmployees">Current Employees</h2>
-    <div id="employeesOutput"></div>
-    <h2 id="currentTables">Current Tables</h2>
-    <div id="tablesOutput"></div>
+    <div id="header">
+      <img src="image/this-is-fine.jpg">
+      <h1>I Don't Really Care: </h1>
+      <h2><em>A restaurant</em></h2>
+    </div>
+    <div id="tableCreateDiv">
+      <h2>Create Table</h2>
+      Name:<input type="text" id="nameIn" value="" placeholder='Ex: table01'>
+      Capacity:<select id="capacityIn">
+        <option value=2>2</option>
+        <option value=4>4</option>
+        <option value=6>6</option>
+        <option value=8>8</option>
+        <option value=10>10</option>
+      </select>
+      <button id="createTable">Add Table</button>
+    </div>
+    <div id="employeeCreateDiv">
+      <h2>Create Employee</h2>
+      <input type="text" id="employeeFirstNameIn" value="" placeholder="First Name">
+      <input type="text" id="employeeLastNameIn" value="" placeholder="Last Name">
+      <button id="createEmployee">Add Employee</button>
+    </div>
+      <h2 id ="currentEmployees">Current Employees</h2>
+      <div id="employeesOutput"></div>
+      <h2 id="currentTables">Current Tables</h2>
+      <div id="tablesOutput"></div>
   </body>
 </html>
