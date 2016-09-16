@@ -70,9 +70,18 @@ app.post('/addServer', urlEncodedParser, function(req,res){
     }//end if
     else{
       console.log('connected to database for addServer');
-      var queryResults = client.query('INSERT INTO server (first_name, last_name) VALUES ($1,$2) ',
-      [req.body.first_name, req.body.last_name],
-      done());
+      var resultArray = [];
+      var queryResults = client.query('INSERT INTO server (first_name, last_name) VALUES ($1,$2)',
+      [req.body.first_name, req.body.last_name]);
+      queryResults.on('row', function(row){
+
+        resultArray.push(row);
+        console.log(resultArray);
+      });//end queryResults on row
+      queryResults.on('end', function(){
+        done();
+        return res.json(resultArray);
+      });//end queryResults on end
     }//end else
   });//end pg
 });//end /addServer
@@ -111,7 +120,7 @@ app.post('/addTable', urlEncodedParser, function(req,res){
     else{
       console.log('connected to database for addTable');
       var resultArray =[];
-      var queryResults = client.query('INSERT INTO dinner_table (table_name, capacity, status) VALUES ($1,$2,$3) ', [req.body.table_name, req.body.capacity, req.body.status], done());
+      var queryResults = client.query('INSERT INTO dinner_table (table_name, capacity, status) VALUES ($1,$2,$3) ', [req.body.table_name, req.body.capacity, req.body.status]);
       queryResults.on('row', function(row){
         resultArray.push(row);
         console.log(resultArray);
