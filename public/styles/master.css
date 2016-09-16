@@ -1,0 +1,54 @@
+body{
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #eeeeee;
+
+}
+img{
+  width: 500px;
+  height:250px;
+}
+h1{
+  text-align: center;
+  background-color: darkgrey;
+  margin-bottom: -20px;
+  border: 2px solid black;
+  border-bottom: none;
+
+}
+ h2{
+  text-align: center;
+    background-color: darkgrey;
+    border: 2px solid black;
+    border-top: none;
+}
+li{
+  list-style-type: none;
+}
+button{
+  background:#cccccc;
+  border: 2px solid black;
+}
+#tableCreateDiv{
+  text-align: center;
+}
+#tableCreateDiv h2, #employeeCreateDiv h2,  #currentEmployees, #currentTables{
+  font-size:18px;
+  text-align: center;
+    background-color: darkgrey;
+    border: 2px solid black;
+}
+
+#employeeCreateDiv{
+  text-align: center;
+}
+#employeesOutput{
+  text-align: center;
+}
+#tablesOutput{
+  text-align: center;
+}
+#employeesOutput button{
+  margin-bottom: 5px;
+}
