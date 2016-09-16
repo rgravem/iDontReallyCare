@@ -71,7 +71,7 @@ app.post('/addServer', urlEncodedParser, function(req,res){
     else{
       console.log('connected to database for addServer');
       var resultArray = [];
-      var queryResults = client.query('INSERT INTO server (first_name, last_name) VALUES ($1,$2)',
+      var queryResults = client.query('INSERT INTO server (first_name, last_name) VALUES ($1,$2) RETURNING *;',
       [req.body.first_name, req.body.last_name]);
       queryResults.on('row', function(row){
 
@@ -120,7 +120,7 @@ app.post('/addTable', urlEncodedParser, function(req,res){
     else{
       console.log('connected to database for addTable');
       var resultArray =[];
-      var queryResults = client.query('INSERT INTO dinner_table (table_name, capacity, status) VALUES ($1,$2,$3) ', [req.body.table_name, req.body.capacity, req.body.status]);
+      var queryResults = client.query('INSERT INTO dinner_table (table_name, capacity, status) VALUES ($1,$2,$3) RETURNING *;', [req.body.table_name, req.body.capacity, req.body.status]);
       queryResults.on('row', function(row){
         resultArray.push(row);
         console.log(resultArray);

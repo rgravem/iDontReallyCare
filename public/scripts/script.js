@@ -20,20 +20,17 @@ $(document).ready(function(){
           employees.push(data[ i ]);
         }
         listEmployees(data);
+        $.ajax({
+            type:"get",
+            url: '/getAllTables',
+            success: function(table){
+              console.log("back from the server with:", table);
+              tables.push(table);
+              listTables(tables[0]);
+            }//end success
+        });// end getTables ajax
       }//end success
   });// end getServer ajax
-
-  $('#currentTables').on('click', function(){
-    $.ajax({
-        type:"get",
-        url: '/getAllTables',
-        success: function(table){
-          console.log("back from the server with:", table);
-          tables.push(table);
-          listTables(table);
-        }//end success
-    });// end getTables ajax
-  });//end on click
 
 
   // add employee on click
@@ -49,8 +46,8 @@ $(document).ready(function(){
       success: function(data){
         console.log("ajax success back with:", data);
         //display  employees in employeesOutput
-        employees.push(data);
-        listEmployees(data);
+        employees.push(data[0]);
+        listEmployees(employees);
         // push into employees array
 
       }//end success
@@ -68,9 +65,9 @@ $(document).ready(function(){
       data: newTable,
       success: function(data){
         console.log('ajax success back with:', data);
-        tables.push(data[0]);
+        tables[0].push(data[0]);
 
-        listTables(data);
+        listTables(tables[0]);
 
       }//end success
     });//end ajax
@@ -197,7 +194,7 @@ var listEmployees = function(data){
 }; // end listEmployees
 
 var listTables = function(table){
-  var outputText;
+  var outputText = '';
   console.log( "in listTables" );
 
   // loop through the tables array and display each table
@@ -208,10 +205,12 @@ var listTables = function(table){
   // display employees
   console.log("data before for loop", table);
   for( i=0; i< table.length; i++ ){
-    var server;
-    for (var n = 0; n < employees.length; n++) {
-      if (employees[n].id === table[i].server_id){
-        server = employees[n];
+    var server = false;
+    if (table[i].server_id){
+      for (var n = 0; n < employees.length; n++) {
+        if (employees[n].id === table[i].server_id){
+          server = employees[n];
+        }
       }
     }
     var currentServer = 'None';
@@ -224,4 +223,5 @@ var listTables = function(table){
     outputText += '<p id="table' + i + '">' + line + '</p>';
     $('#tablesOutput').html(outputText);
   }
+  // console.log(outputText);
 }; // end listTables
